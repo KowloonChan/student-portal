@@ -19,4 +19,6 @@ router.put(
   adminController.updateDocumentStatus,
 );
 
+router.get("/students", verifyToken, isAdmin, adminController.getAllStudents);
+
 module.exports = router;
