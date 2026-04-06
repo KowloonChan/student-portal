@@ -1,11 +1,11 @@
-const db = require("./db");
+const db = require("../config/db");
 
 module.exports = {
-  getGradeForStudent: async (enrollmentId) => {
+  getGradeForStudent: async (courseId, studentId) => {
     const result = await db.query(
-      "SELECT * FROM grades WHERE enrollment_id = $1",
-      [enrollmentId]
+      "SELECT * FROM grades WHERE course_id = $1 AND student_id = $2",
+      [courseId, studentId],
     );
     return result.rows[0];
-  }
+  },
 };

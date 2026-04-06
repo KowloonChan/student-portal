@@ -1,16 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin.controller");
+const { verifyToken } = require("../middlewares/auth.middleware");
+const { isAdmin } = require("../middlewares/role.middleware");
 
-// TODO (Person 3): Add isAdmin role authorization middleware to both of these routes
-// Example: router.get('/documents/pending', verifyToken, isAdmin, adminController.getPendingDocuments);
+// Notice how middlewares are chained: First verify they are logged in, THEN verify they are an admin
+router.get(
+  "/documents/pending",
+  verifyToken,
+  isAdmin,
+  adminController.getPendingDocuments,
+);
 
-// GET /api/admin/documents/pending
-router.get("/documents/pending", adminController.getPendingDocuments);
-
-// PUT /api/admin/documents/:documentId/status
 router.put(
   "/documents/:documentId/status",
+  verifyToken,
+  isAdmin,
   adminController.updateDocumentStatus,
 );
 

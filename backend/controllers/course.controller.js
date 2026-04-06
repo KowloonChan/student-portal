@@ -1,33 +1,19 @@
+const Course = require("../models/Course"); // Import Person 1's DB Model
+
 exports.searchCourses = async (req, res) => {
   try {
-    const searchQuery = req.query.search;
+    // 1. Get the search term from the URL (default to empty string if none provided)
+    const searchQuery = req.query.search || "";
 
-    // TODO (Person 1): Replace mock with: const courses = await Course.find({ name: { $regex: searchQuery } });
+    // 2. Pass it to the Postgres function
+    const courses = await Course.getCourses(searchQuery);
 
-    // --- MOCK LOGIC START ---
-    const mockCourses = [
-      {
-        courseId: "INFO2050",
-        courseName: "Computer Security",
-        description: "Systems Development: Computer Security",
-      },
-      {
-        courseId: "PROG1020",
-        courseName: "Logic and Programming",
-        description: "Intro to programming",
-      },
-    ];
-
-    const filtered = searchQuery
-      ? mockCourses.filter((c) =>
-          c.courseName.toLowerCase().includes(searchQuery.toLowerCase()),
-        )
-      : mockCourses;
-
-    res.status(200).json(filtered);
-    // --- MOCK LOGIC END ---
+    // 3. Return the real database results to the frontend!
+    res.status(200).json(courses);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching courses" });
+    res
+      .status(500)
+      .json({ message: "Error fetching courses", error: error.message });
   }
 };
 
