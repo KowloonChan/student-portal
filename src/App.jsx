@@ -7,7 +7,8 @@ import Upload from './pages/student/Upload';
 import AdminPanel from './pages/admin/AdminPanel';
 import Profile from './pages/common/Profile';
 import Dashboard from './pages/common/Dashboard';
-
+import StudentList from './pages/admin/StudentList';
+import CourseList from './pages/student/CourseList';
 // 路由守卫：未登录直接踢回 /login
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -35,12 +36,13 @@ function App() {
             {/* 学生功能 */}
             <Route path="grades" element={<Grades />} />
             <Route path="upload" element={<Upload />} />
+            <Route path="courses" element={<CourseList />} />
             
             {/* 管理员功能 */}
             <Route path="admin" element={<AdminPanel />} />
 
             <Route path="profile" element={<Profile />} />
-
+            <Route path="students" element={<StudentList />} /> 
           </Route>
 
           {/* 3. 捕获所有未定义路由，返回首页 */}

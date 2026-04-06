@@ -1,25 +1,29 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, FileText, Upload, User, ShieldCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard,BookOpen, FileText, Upload,Users, User, ShieldCheck, LogOut } from 'lucide-react';
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  console.log({user,logout});
+  
   const navigate = useNavigate();
 
   // 1. 定义所有可能的菜单项，并标注它们所属的角色
   const allMenuItems = [
-    { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} />, roles: ['student', 'admin'] },
-    { name: 'My Grades', path: '/grades', icon: <FileText size={20} />, roles: ['student'] },
-    { name: 'Upload Docs', path: '/upload', icon: <Upload size={20} />, roles: ['student'] },
-    { name: 'Admin Panel', path: '/admin', icon: <ShieldCheck size={20} />, roles: ['admin'] },
-    { name: 'Profile', path: '/profile', icon: <User size={20} />, roles: ['student', 'admin'] },
-  ];
+    { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} />, roles: ['Student', 'Admin'] },
+    { name: 'Upload Docs', path: '/upload', icon: <Upload size={20} />, roles: ['Student'] },
+    { name: 'Admin Panel', path: '/admin', icon: <ShieldCheck size={20} />, roles: ['Admin'] },
+    { name: 'Manage Students', path: '/students', icon: <Users size={20} />, roles: ['Admin'] },
+    { name: 'Browse Courses', path: '/courses', icon: <BookOpen size={20} />, roles: ['Student'] },
+    { name: 'Profile', path: '/profile', icon: <User size={20} />, roles: ['Student', 'Admin'] },
+    // 在 allMenuItems 数组中添加：
+];
 
   // 2. 根据当前登录用户的角色进行过滤 (落实 CIA: Confidentiality)
   const filteredMenuItems = allMenuItems.filter(item => 
     item.roles.includes(user?.role)
   );
-
+  
   const handleLogout = () => {
     logout();
     navigate('/login');

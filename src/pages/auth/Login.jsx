@@ -1,33 +1,26 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
+import { loginApi } from '../../api/auth'; // 导入新 API
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // 模拟 JWT：这些字符串经过了 Base64 编码，jwt-decode 可以解析出里面的 role
-  const MOCK_STUDENT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiWHVhbnl1Iiwicm9sZSI6InN0dWRlbnQiLCJleHAiOjI1MjQ2MDg4MDB9.none";
-  const MOCK_ADMIN_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjI1MjQ2MDg4MDB9.none";
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 模拟后端验证逻辑
-    if (email === 'student@edu.com' && password === '123456') {
-      login(MOCK_STUDENT_TOKEN);
-      console.log("Logged in as Student");
+    try {
+      // 调用 API 函数 [cite: 92]
+      const data = await loginApi(email, password);
+      
+      // 存储 Token 和用户信息 
+      login(data.token, data.user); 
+      
+      // 跳转到 Dashboard
       navigate('/', { replace: true });
-    } 
-    else if (email === 'admin@edu.com' && password === 'admin123') {
-      login(MOCK_ADMIN_TOKEN);
-      console.log("Logged in as Admin");
-      navigate('/', { replace: true });
-    } 
-    else {
-      alert("Invalid credentials! Try student@edu.com/123456 or admin@edu.com/admin123");
+    } catch (err) {
+      alert("Login failed: " + err.message);
     }
   };
 

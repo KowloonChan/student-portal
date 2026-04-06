@@ -77,7 +77,7 @@ export default function Dashboard() {
         <p className="text-slate-500 text-sm">Real-time system status and information.</p>
       </div>
 
-      {user?.role === 'admin' ? <AdminOverview /> : <StudentOverview />}
+      {user?.role === 'Admin' ? <AdminOverview /> : <StudentOverview />}
     </div>
   );
 }

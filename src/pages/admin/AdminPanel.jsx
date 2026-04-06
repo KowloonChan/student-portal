@@ -1,75 +1,111 @@
-import { UserPlus, Trash2, Shield } from 'lucide-react';
-import { useState } from 'react';
-import AddStudentModal from './AddStudentModal';
-export default function AdminPanel() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [students, setStudents] = useState([
-    { id: 'S001', name: 'Xuanyu Wang', email: 'xy@edu.com', status: 'Active' }
-  ]);
+import { useEffect, useState } from 'react';
+import { fetchPendingDocumentsApi, updateDocumentStatusApi } from '../../api/admin';
+import { Eye, Download, User, MessageSquare, X, Check, AlertCircle } from 'lucide-react';
 
- const handleAddStudent = (newStudent) => {
-    // 实际项目中这里会使用 fetch 发送 POST 请求 [cite: 25]
-    const studentWithStatus = { ...newStudent, status: 'Active' };
-    setStudents([...students, studentWithStatus]);
-    alert(`Student ${newStudent.name} added successfully!`);
+export default function AdminPanel() {
+  const [documents, setDocuments] = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState(null); // 控制弹窗的数据
+
+  useEffect(() => {
+    fetchPendingDocumentsApi().then(setDocuments); 
+  }, []);
+
+  const handleAction = async (docId, status) => {
+    try {
+      // 这里的 status 和 comments 对应后端 PUT 接口 [cite: 135]
+      await updateDocumentStatusApi(docId, status, "Processed by admin");
+      setDocuments(documents.filter(d => d.documentId !== docId));
+      setSelectedDoc(null);
+      alert(`Document ${status}!`); 
+    } catch (err) {
+      alert("Action failed");
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold flex items-center">
-          <Shield className="mr-2 text-indigo-600" /> User Management
-        </h1>
-        <button 
-        onClick={() => setIsModalOpen(true)}
-        className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-      >
-        <UserPlus size={18} className="mr-2" /> Add New Student
-      </button>
+      <h1 className="text-2xl font-bold text-slate-800">Pending Approvals</h1>
+      
+      <div className="grid gap-4">
+        {documents.map(doc => (
+          <div key={doc.documentId} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center hover:border-indigo-300 transition-colors">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-slate-100 rounded-lg text-slate-500">
+                <User size={20} />
+              </div>
+              <div>
+                <p className="font-bold text-slate-800">{doc.studentName}</p>
+                <p className="text-sm text-slate-500">{doc.documentType} • {new Date(doc.uploadDate).toLocaleDateString()}</p>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setSelectedDoc(doc)}
+              className="flex items-center px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
+            >
+              <Eye size={18} className="mr-2" /> Review
+            </button>
+          </div>
+        ))}
+        {documents.length === 0 && <p className="text-slate-500 italic">No pending documents to review.</p>}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="p-4 font-medium text-gray-600">Student ID</th>
-              <th className="p-4 font-medium text-gray-600">Full Name</th>
-              <th className="p-4 font-medium text-gray-600">Email</th>
-              <th className="p-4 font-medium text-gray-600">Status</th>
-              <th className="p-4 font-medium text-gray-600 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((s) => (
-              <tr key={s.id} className="border-b last:border-0">
-                <td className="p-4 font-mono text-sm">{s.id}</td>
-                <td className="p-4">{s.name}</td>
-                <td className="p-4 text-gray-600">{s.email}</td>
-                <td className="p-4">
-                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                    {s.status}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <div className="flex justify-center">
-                    <button 
-                      onClick={() => handleDelete(s.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <AddStudentModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onAdd={handleAddStudent} 
-      />
+      {/* 审批弹窗 (Modal) */}
+      {selectedDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+              <h3 className="font-bold text-slate-800">Document Review</h3>
+              <button onClick={() => setSelectedDoc(null)} className="text-slate-400 hover:text-slate-600"><X /></button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* 用户信息 */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Uploader</p>
+                  <p className="text-lg font-bold text-slate-800">{selectedDoc.studentName}</p>
+                  <p className="text-sm text-slate-500">ID: {selectedDoc.studentId}</p>
+                </div>
+                <a 
+                  href={selectedDoc.fileUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center px-4 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 transition-colors"
+                >
+                  <Download size={16} className="mr-2" /> Download File
+                </a>
+              </div>
+
+              {/* 学生留言 */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p className="text-xs text-slate-400 font-bold mb-2 flex items-center">
+                  <MessageSquare size={12} className="mr-1" /> STUDENT COMMENT
+                </p>
+                <p className="text-slate-700 text-sm leading-relaxed italic">
+                  "{selectedDoc.studentComment || 'No comment provided.'}"
+                </p>
+              </div>
+            </div>
+
+            {/* 操作按钮 */}
+            <div className="px-6 py-4 bg-slate-50 border-t flex space-x-3">
+              <button 
+                onClick={() => handleAction(selectedDoc.documentId, 'rejected')}
+                className="flex-1 flex items-center justify-center px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 font-bold transition-colors"
+              >
+                <AlertCircle size={18} className="mr-2" /> Reject
+              </button>
+              <button 
+                onClick={() => handleAction(selectedDoc.documentId, 'approved')}
+                className="flex-1 flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 font-bold transition-colors"
+              >
+                <Check size={18} className="mr-2" /> Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
