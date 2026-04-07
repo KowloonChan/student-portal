@@ -9,20 +9,24 @@ const storage = multer.diskStorage({
   },
 });
 
-// Security: Limit file size to 5MB and restrict to PDFs/Images
+// Security: Limit file size to 2MB (to match frontend) and restrict types
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5000000 },
+  limits: { fileSize: 2 * 1024 * 1024 }, // Exactly 2MB
   fileFilter: (req, file, cb) => {
+    // It is safer to check both the file extension AND the mimetype
     const filetypes = /pdf|jpeg|jpg|png/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase(),
     );
-    if (extname) {
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (extname && mimetype) {
       return cb(null, true);
     }
     cb(new Error("Error: Only PDFs and Images are allowed!"));
   },
-}).single("file"); // Matches API contract 'file' field
+});
 
-module.exports = { upload };
+// Export the multer instance directly
+module.exports = upload;
