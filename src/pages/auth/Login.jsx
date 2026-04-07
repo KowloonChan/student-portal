@@ -77,17 +77,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8 p-4 bg-amber-50 rounded-lg border border-amber-100">
-          <p className="text-xs text-amber-800 font-medium mb-1">
-            Real Postgres Testing Credentials:
-          </p>
-          <p className="text-xs text-amber-700">
-            Student: student@college.edu / password123
-          </p>
-          <p className="text-xs text-amber-700">
-            Admin: admin@college.edu / password123
-          </p>
-        </div>
+        
       </div>
     </div>
   );
