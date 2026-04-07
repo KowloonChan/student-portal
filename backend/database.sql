@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS documents, grades, courses, users CASCADE;
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100),

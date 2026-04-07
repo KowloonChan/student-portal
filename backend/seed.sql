@@ -4,11 +4,11 @@
 -- ==========================================
 INSERT INTO users (first_name, last_name, email, password_hash, role) 
 VALUES 
-('Alice', 'Smith', 'admin@college.edu', '$2b$12$9gYgEJm.PQKjWgQ8JZXm1eGvKvKZrIrQ3V9LKRrHlCJ7LZ8pGQm5G.', 'Admin'),
-('John', 'Doe', 'student@college.edu', '$2b$12$9gYgEJm.PQKjWgQ8JZXm1eGvKvKZrIrQ3V9LKRrHlCJ7LZ8pGQm5G.', 'Student'),
-('Jane', 'Wong', 'jwong@college.edu', '$2b$12$9gYgEJm.PQKjWgQ8JZXm1eGvKvKZrIrQ3V9LKRrHlCJ7LZ8pGQm5G.', 'Student'),
-('Marcus', 'Johnson', 'mjohnson@college.edu', '$2b$12$9gYgEJm.PQKjWgQ8JZXm1eGvKvKZrIrQ3V9LKRrHlCJ7LZ8pGQm5G.', 'Student'),
-('Elena', 'Rodriguez', 'erodriguez@college.edu', '$2b$12$9gYgEJm.PQKjWgQ8JZXm1eGvKvKZrIrQ3V9LKRrHlCJ7LZ8pGQm5G.', 'Student');
+('Alice', 'Smith', 'admin@college.edu', '$2b$10$ongV8/EQIHiO4p1CUTgVAeRDPTdX5y/1sJcxqr.DFhv30NHsIhe1C', 'Admin'),
+('John', 'Doe', 'student@college.edu', '$2b$10$ongV8/EQIHiO4p1CUTgVAeRDPTdX5y/1sJcxqr.DFhv30NHsIhe1C', 'Student'),
+('Jane', 'Wong', 'jwong@college.edu', '$2b$10$ongV8/EQIHiO4p1CUTgVAeRDPTdX5y/1sJcxqr.DFhv30NHsIhe1C', 'Student'),
+('Marcus', 'Johnson', 'mjohnson@college.edu', '$2b$10$ongV8/EQIHiO4p1CUTgVAeRDPTdX5y/1sJcxqr.DFhv30NHsIhe1C', 'Student'),
+('Elena', 'Rodriguez', 'erodriguez@college.edu', '$2b$10$ongV8/EQIHiO4p1CUTgVAeRDPTdX5y/1sJcxqr.DFhv30NHsIhe1C', 'Student');
 
 -- ==========================================
 -- 2. SEED COURSES (5 Records)
