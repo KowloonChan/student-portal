@@ -8,16 +8,34 @@ export default function Upload() {
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState({ type: '', msg: '' });
 
+  // 定义允许的文件类型 (MIME Types)
+  const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
+
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
     if (selected) {
-      if (selected.size > 2 * 1024 * 1024) { // OWASP: 限制文件大小防止 DoS [cite: 125]
-        setStatus({ type: 'error', msg: '文件大小不能超过 2MB' });
+      // 1. 校验文件类型 (预防性安全)
+      if (!ALLOWED_TYPES.includes(selected.type)) {
+        setStatus({ 
+          type: 'error', 
+          msg: 'Invalid file type. Only PDF, JPG, and PNG are allowed.' 
+        });
         setFile(null);
-      } else {
-        setFile(selected);
-        setStatus({ type: '', msg: '' });
+        e.target.value = ''; // 清空 input
+        return;
       }
+
+      // 2. 校验文件大小 (防止 DoS)
+      if (selected.size > 2 * 1024 * 1024) {
+        setStatus({ type: 'error', msg: 'File size must be less than 2MB.' });
+        setFile(null);
+        e.target.value = '';
+        return;
+      }
+
+      // 校验通过
+      setFile(selected);
+      setStatus({ type: '', msg: '' });
     }
   };
 
@@ -26,13 +44,13 @@ export default function Upload() {
     setIsUploading(true);
     
     try {
-      // 调用更新后的 API，传入留言
+      // 根据后端合约，上传文件需要包含二进制数据、类型和留言
       const response = await uploadDocumentApi(file, "certification", comment);
       setStatus({ type: 'success', msg: response.message });
       setFile(null);
       setComment('');
     } catch (err) {
-      setStatus({ type: 'error', msg: '上传失败，请重试' });
+      setStatus({ type: 'error', msg: err.message || 'Upload failed, please try again.' });
     } finally {
       setIsUploading(false);
     }
@@ -42,29 +60,35 @@ export default function Upload() {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-800">Submit Document</h1>
-        <p className="text-slate-500">Upload your certifications or profile materials for review.</p>
+        <p className="text-slate-500">Upload your academic certifications for admin review.</p>
       </div>
       
-      {/* 文件拖拽/选择区 */}
+      {/* 文件选择区 */}
       <div className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all ${
         file ? 'border-indigo-400 bg-indigo-50' : 'border-slate-300 bg-white hover:border-indigo-300'
       }`}>
-        <input type="file" id="file-upload" className="hidden" onChange={handleFileChange} />
+        <input 
+          type="file" 
+          id="file-upload" 
+          className="hidden" 
+          onChange={handleFileChange}
+          accept=".pdf,.jpg,.jpeg,.png" 
+        />
         <label htmlFor="file-upload" className="cursor-pointer block">
           <FileUp size={48} className="mx-auto text-slate-400 mb-4" />
           <p className="text-slate-700 font-medium">{file ? file.name : 'Click to select a file'}</p>
-          <p className="text-xs text-slate-400 mt-2">PDF, JPG, PNG (Max 2MB)</p>
+          <p className="text-xs text-slate-400 mt-2">Allowed: PDF, JPG, PNG (Max 2MB)</p>
         </label>
       </div>
 
-      {/* 留言输入框 - 新增部分 */}
+      {/* 留言输入框 */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-slate-700 flex items-center">
           <MessageSquare size={16} className="mr-2" /> Message to Administrator
         </label>
         <textarea 
           className="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none min-h-[100px] bg-white transition-all"
-          placeholder="Describe the document you are uploading (e.g., 'AWS Certified Cloud Practitioner certificate')..."
+          placeholder="e.g. Please find my AWS certification attached."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
