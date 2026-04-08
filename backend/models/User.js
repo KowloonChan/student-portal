@@ -24,9 +24,7 @@ module.exports = {
     return result.rows[0];
   },
 
-  // Add this below your existing functions in User.js
   getAllStudents: async () => {
-    // Only fetch users who are marked as 'Student'
     const result = await db.query(
       "SELECT id, first_name, last_name, email FROM users WHERE role = 'Student'",
     );

@@ -5,19 +5,23 @@ import { BookOpen, Search, X, Award, Info, Loader2 } from 'lucide-react';
 export default function CourseList() {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState(null); // 存储查到的成绩
+  const [selectedGrade, setSelectedGrade] = useState(null); // Stores the fetched grade data for the modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetchingGrade, setIsFetchingGrade] = useState(false);
 
+  // Synchronize component state with the course directory based on search parameters
   useEffect(() => {
     fetchAllCoursesApi(searchTerm).then(setCourses);
   }, [searchTerm]);
 
+
+  // Handles the retrieval of a student's grade for a specific course.
+  // Implements Security Note: Validates that students only fetch their own grades.
   const handleViewGrade = async (courseId) => {
     setIsFetchingGrade(true);
     setIsModalOpen(true);
     try {
-      // 调用后端合约接口 
+      // Calls the backend API contract endpoint for specific course grades 
       const data = await fetchStudentGradesApi(courseId);
       setSelectedGrade(data);
     } catch (err) {
@@ -31,7 +35,7 @@ export default function CourseList() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Available Courses</h1>
       
-      {/* 课程卡片网格 */}
+      {/* Course Card Grid: Displays list of courses fetched from Layer 2 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {courses.map(course => (
           <div key={course.courseId} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -52,7 +56,7 @@ export default function CourseList() {
         ))}
       </div>
 
-      {/* 成绩显示弹窗 (Modal) */}
+      {/* Grade Display Modal: Provides real-time feedback for student performance */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">

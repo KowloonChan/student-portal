@@ -4,11 +4,10 @@ import { LayoutDashboard,BookOpen, FileText, Upload,Users, User, ShieldCheck, Lo
 
 export default function Layout() {
   const { user, logout } = useAuth();
-  console.log({user,logout});
-  
   const navigate = useNavigate();
 
-  // 1. 定义所有可能的菜单项，并标注它们所属的角色
+  // 1. Define all available menu items and assign their authorized roles.
+  // Role names follow the backend contract: "Student" and "Admin".
   const allMenuItems = [
     { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} />, roles: ['Student', 'Admin'] },
     { name: 'Upload Docs', path: '/upload', icon: <Upload size={20} />, roles: ['Student'] },
@@ -16,10 +15,10 @@ export default function Layout() {
     { name: 'Manage Students', path: '/students', icon: <Users size={20} />, roles: ['Admin'] },
     { name: 'Browse Courses', path: '/courses', icon: <BookOpen size={20} />, roles: ['Student'] },
     { name: 'Profile', path: '/profile', icon: <User size={20} />, roles: ['Student', 'Admin'] },
-    // 在 allMenuItems 数组中添加：
 ];
 
-  // 2. 根据当前登录用户的角色进行过滤 (落实 CIA: Confidentiality)
+  // 2. Filter menu items based on the currently logged-in user's role.
+  // This implements CIA: Confidentiality by preventing unauthorized UI access.
   const filteredMenuItems = allMenuItems.filter(item => 
     item.roles.includes(user?.role)
   );

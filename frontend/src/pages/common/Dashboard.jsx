@@ -7,9 +7,11 @@ import {
 export default function Dashboard() {
   const { user } = useAuth();
 
-  // --- Admin 视图的内容 ---
+  // --- Admin View Content ---
+  // Provides high-level system oversight and operational metrics for administrators.
   const AdminOverview = () => (
     <div className="space-y-6">
+      {/* KPI Section: Monitoring System Health and Security Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard icon={<Users className="text-blue-600" />} title="Total Students" value="128" color="bg-blue-50" />
         <StatCard icon={<ShieldAlert className="text-red-600" />} title="Security Threats Blocked" value="12" color="bg-red-50" />
@@ -29,7 +31,8 @@ export default function Dashboard() {
     </div>
   );
 
-  // --- Student 视图的内容 ---
+  // --- Student View Content ---
+  // Personalized interface for students to monitor academic progress and account security
   const StudentOverview = () => (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-8 text-white shadow-lg">
@@ -52,7 +55,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-
+        
+        {/* Security Status: Displays personal account safety metrics */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <h3 className="font-bold text-slate-800 mb-4 flex items-center">
             <ShieldCheck className="mr-2 text-green-500" size={18} /> Security Status
@@ -76,13 +80,14 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold text-slate-800">Dashboard Overview</h1>
         <p className="text-slate-500 text-sm">Real-time system status and information.</p>
       </div>
-
+      {/* Role-Based Access Control (RBAC): Renders view based on authenticated role */}
       {user?.role === 'Admin' ? <AdminOverview /> : <StudentOverview />}
     </div>
   );
 }
 
-// 辅助子组件：统计卡片
+// Sub-component: StatCard
+// Displays a metric with an icon and contextual background color
 function StatCard({ icon, title, value, color }) {
   return (
     <div className={`p-6 rounded-2xl shadow-sm border border-slate-100 ${color}`}>
@@ -99,7 +104,8 @@ function StatCard({ icon, title, value, color }) {
   );
 }
 
-// 辅助子组件：动态项
+// Sub-component: ActivityItem
+// Renders a single row in the audit log or activity feed
 function ActivityItem({ text, time }) {
   return (
     <div className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-lg transition-colors">

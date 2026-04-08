@@ -7,23 +7,24 @@ export default function AddStudentModal({ isOpen, onClose, onAdd }) {
 
   if (!isOpen) return null;
 
-  // 核心校验逻辑：落实 Integrity (完整性) [cite: 19]
+  // Core validation logic to enforce Data Integrity (CIA Pillar).
+  // Ensures that only valid data reaches the backend services.
   const validate = () => {
     let newErrors = {};
     
-    // ID 校验 (假设格式为 S + 3位数字)
+    // Student ID validation (Expected format: S followed by 3 digits, e.g., S001)
     if (!/^S\d{3}$/.test(formData.id)) {
-      newErrors.id = 'ID 格式应为 S 开头加三位数字 (如 S001)';
+      newErrors.id = 'ID format must be "S" followed by 3 digits (e.g., S001)';
     }
 
-    // 姓名校验 (防止 XSS/注入，简单限制长度和非法字符) 
+    // Full Name validation (Sanitization to prevent XSS/Injection and check for invalid characters)
     if (formData.name.length < 2 || /[<>{}[\]]/.test(formData.name)) {
-      newErrors.name = '姓名无效或包含非法字符';
+      newErrors.name = 'Invalid name or contains illegal characters';
     }
 
-    // 邮箱校验
+    // Email format validation via standard Regex
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '请输入有效的邮箱地址';
+      newErrors.email = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
@@ -33,10 +34,11 @@ export default function AddStudentModal({ isOpen, onClose, onAdd }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // 落实 Logging：记录管理员添加行为 
+      // Implementing Logging: Recording administrative actions for audit trails.
+      // This ensures accountability for system changes.
       console.log(`[AUDIT LOG]: Admin attempting to add student: ${formData.id}`);
       onAdd(formData);
-      setFormData({ id: '', name: '', email: '' }); // 重置
+      setFormData({ id: '', name: '', email: '' }); // Reset form state
       onClose();
     }
   };
