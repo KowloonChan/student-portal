@@ -5,7 +5,7 @@ import { User, Mail, Shield, Phone, MapPin, Save, AlertCircle } from 'lucide-rea
 export default function Profile() {
   const { user } = useAuth();
   
-  // 初始状态：模拟从后端获取的其他信息
+  // // Initial State: Simulating additional user metadata retrieved from the backend
   const [formData, setFormData] = useState({
     phone: '+60 12-345 6789',
     address: '123 University Street, KL',
@@ -18,7 +18,7 @@ export default function Profile() {
   const handleUpdate = (e) => {
     e.preventDefault();
     
-    // 落实 OWASP (A03: Injection) 防御：简单的输入脱敏逻辑
+    // Implementing OWASP (A03: Injection) defense: basic input sanitization logic
     const sanitize = (str) => str.replace(/[<>{}]/g, ""); 
     
     const updatedData = {
@@ -27,7 +27,7 @@ export default function Profile() {
       bio: sanitize(formData.bio)
     };
 
-    // 落实 Logging：记录用户修改资料的行为
+    // Implementing Logging: Recording administrative/user actions for audit trails
     console.log(`[AUDIT LOG]: User ${user.name} updated their profile info.`);
     
     setFormData(updatedData);
@@ -40,6 +40,7 @@ export default function Profile() {
     <div className="max-w-4xl mx-auto space-y-8">
       <h1 className="text-3xl font-bold text-slate-800">My Profile</h1>
 
+      {/* Success Feedback: Ensuring Availability and clear system response */}
       {message && (
         <div className="p-4 bg-green-100 text-green-700 rounded-xl flex items-center animate-bounce">
           <Save size={18} className="mr-2" /> {message}
@@ -47,7 +48,7 @@ export default function Profile() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* 左侧：基本信息卡片 (CIA: Confidentiality - 只展示当前用户数据) */}
+        {/* Sidebar: Basic Info Card (CIA: Confidentiality - Displays only authorized user data) */}
         <div className="md:col-span-1 space-y-6">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
             <div className="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center mb-4">
@@ -71,7 +72,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* 右侧：可编辑的详细信息 (CIA: Integrity - 通过表单验证确保数据正确) */}
+        {/* Main Section: Editable Details (CIA: Integrity - Ensuring data accuracy via form validation) */}
         <div className="md:col-span-2">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
@@ -127,7 +128,7 @@ export default function Profile() {
               {isEditing && (
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                   <p className="text-xs text-amber-600 flex items-center italic">
-                    <AlertCircle size={12} className="mr-1" />所有修改都将被审计记录
+                    <AlertCircle size={12} className="mr-1" />All modifications will be recorded in the audit log
                   </p>
                   <button 
                     type="submit"

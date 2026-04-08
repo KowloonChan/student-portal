@@ -17,7 +17,9 @@ export default function CourseSearch() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* 搜索结果卡片示例 */}
+        {/* Example Search Result Card based on provided Course Data.
+          Matches the "Systems Development: Computer Security" entry.
+        */}
         <div className="p-4 bg-white border rounded-lg shadow-sm">
           <h3 className="font-bold text-lg">Computer Security</h3>
           <p className="text-sm text-gray-500 mb-4">CS-101</p>

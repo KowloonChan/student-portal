@@ -76,8 +76,6 @@ export default function Login() {
             Sign In
           </button>
         </form>
-
-        
       </div>
     </div>
   );

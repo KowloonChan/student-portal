@@ -4,16 +4,19 @@ import { Eye, Download, User, MessageSquare, X, Check, AlertCircle } from 'lucid
 
 export default function AdminPanel() {
   const [documents, setDocuments] = useState([]);
-  const [selectedDoc, setSelectedDoc] = useState(null); // 控制弹窗的数据
+  const [selectedDoc, setSelectedDoc] = useState(null); // Data controlling the review modal state
 
   useEffect(() => {
-    fetchPendingDocumentsApi().then(setDocuments); 
+    fetchPendingDocumentsApi().then(setDocuments); // Fetches documents waiting for review from the admin endpoint
   }, []);
 
   const handleAction = async (docId, status) => {
     try {
-      // 这里的 status 和 comments 对应后端 PUT 接口 [cite: 135]
+      // Updates document status using the backend PUT interface
+      // Request payload includes the new status and administrative comments
       await updateDocumentStatusApi(docId, status, "Processed by admin");
+
+      // Update local state to remove the processed record
       setDocuments(documents.filter(d => d.documentId !== docId));
       setSelectedDoc(null);
       alert(`Document ${status}!`); 
@@ -50,7 +53,7 @@ export default function AdminPanel() {
         {documents.length === 0 && <p className="text-slate-500 italic">No pending documents to review.</p>}
       </div>
 
-      {/* 审批弹窗 (Modal) */}
+      {/* Approval Review Modal */}
       {selectedDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
@@ -60,7 +63,7 @@ export default function AdminPanel() {
             </div>
 
             <div className="p-6 space-y-6">
-              {/* 用户信息 */}
+              {/* Submitter Information */}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Uploader</p>
@@ -77,7 +80,7 @@ export default function AdminPanel() {
                 </a>
               </div>
 
-              {/* 学生留言 */}
+              {/* Student Message/Comment */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <p className="text-xs text-slate-400 font-bold mb-2 flex items-center">
                   <MessageSquare size={12} className="mr-1" /> STUDENT COMMENT
@@ -88,7 +91,7 @@ export default function AdminPanel() {
               </div>
             </div>
 
-            {/* 操作按钮 */}
+            {/* Decision Action Buttons */}
             <div className="px-6 py-4 bg-slate-50 border-t flex space-x-3">
               <button 
                 onClick={() => handleAction(selectedDoc.documentId, 'rejected')}
