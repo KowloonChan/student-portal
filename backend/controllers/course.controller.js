@@ -1,15 +1,15 @@
 const Course = require("../models/Course");
-const Grade = require("../models/Grade"); // Make sure to import the Grade model!
+const Grade = require("../models/Grade");
 
 exports.searchCourses = async (req, res) => {
   try {
-    // 1. Get the search term from the URL
+    // Get the search term from the URL
     const searchQuery = req.query.search || "";
 
-    // 2. Pass it to the Postgres function
+    // Pass it to the database function
     const courses = await Course.getCourses(searchQuery);
 
-    // 3. Map snake_case from Postgres to camelCase for the React frontend
+    // Map snake_case from database to camelCase for React
     const formattedCourses = courses.map((course) => ({
       courseId: course.course_id,
       courseName: course.course_name,
@@ -28,10 +28,10 @@ exports.getGradesByCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    // Get the real studentId from the verified JWT token
+    // Get the studentId from the verified JWT token
     const studentId = req.user.userId;
 
-    // Ask the Database for the real grade
+    // Ask database for the grade
     const gradeRecord = await Grade.getGradeForStudent(courseId, studentId);
 
     // If the student isn't enrolled or doesn't have a grade yet
@@ -44,7 +44,7 @@ exports.getGradesByCourse = async (req, res) => {
       });
     }
 
-    // Return the real grade to the React Modal
+    // Return the real grade to React
     res.status(200).json({
       courseId: courseId,
       studentId: studentId,

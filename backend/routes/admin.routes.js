@@ -4,7 +4,7 @@ const adminController = require("../controllers/admin.controller");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const { isAdmin } = require("../middlewares/role.middleware");
 
-// Notice how middlewares are chained: First verify they are logged in, THEN verify they are an admin
+// Security measure: first verify they are logged in, then verify they are an admin
 router.get(
   "/documents/pending",
   verifyToken,
@@ -12,6 +12,7 @@ router.get(
   adminController.getPendingDocuments,
 );
 
+// Security measure: first verify they are logged in, then verify they are an admin
 router.put(
   "/documents/:documentId/status",
   verifyToken,

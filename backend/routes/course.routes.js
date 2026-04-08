@@ -3,10 +3,10 @@ const router = express.Router();
 const courseController = require("../controllers/course.controller");
 const { verifyToken } = require("../middlewares/auth.middleware");
 
-// Require a valid token to search courses
+// Security measure: require a valid token to search courses
 router.get("/", verifyToken, courseController.searchCourses);
 
-// Require a valid token to view grades
+// Security measure: require a valid token to view grades
 router.get(
   "/:courseId/grades",
   verifyToken,

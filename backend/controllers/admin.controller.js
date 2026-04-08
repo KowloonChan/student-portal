@@ -1,21 +1,25 @@
-const User = require("../models/User"); // Moved to the very top!
+const User = require("../models/User");
+const Document = require("../models/Document");
 
 exports.getPendingDocuments = async (req, res) => {
   try {
-    // TODO (Person 1): Replace with DB query: const docs = await Document.find({ status: 'pending' }).populate('studentId');
+    // Fetch the real documents from database
+    const docs = await Document.getPendingDocuments();
 
-    res.status(200).json([
-      {
-        documentId: "505",
-        studentId: "101",
-        studentName: "John Doe",
-        documentType: "certification",
-        uploadDate: "2026-04-04T14:30:00Z",
-        fileUrl: "/uploads/mock_cert.pdf",
-        status: "pending",
-      },
-    ]);
+    // Format the database rows to match exactly what React expects
+    const formattedDocs = docs.map((doc) => ({
+      documentId: doc.id.toString(),
+      studentId: doc.student_id.toString(),
+      studentName: `${doc.first_name} ${doc.last_name}`,
+      documentType: doc.document_type,
+      uploadDate: doc.uploaded_at,
+      fileUrl: doc.file_path,
+      status: doc.status,
+    }));
+
+    res.status(200).json(formattedDocs);
   } catch (error) {
+    console.error("Error fetching documents:", error);
     res.status(500).json({ message: "Error fetching documents" });
   }
 };
@@ -25,28 +29,30 @@ exports.updateDocumentStatus = async (req, res) => {
     const { documentId } = req.params;
     const { status, comments } = req.body;
 
-    // TODO (Person 1): Replace with DB update: await Document.findByIdAndUpdate(documentId, { status, adminComments: comments });
+    // Call the database update function with the comments parameter
+    await Document.updateDocumentStatus(documentId, status, comments || "");
 
     res.status(200).json({
       message: `Document status updated to ${status}.`,
       documentId: documentId,
     });
   } catch (error) {
+    console.error("Error updating status:", error);
     res.status(500).json({ message: "Error updating document status" });
   }
-}; // <-- Notice this bracket! This properly closes updateDocumentStatus before the next one begins.
+};
 
 exports.getAllStudents = async (req, res) => {
   try {
     const students = await User.getAllStudents();
 
-    // Format the database rows to match exactly what the React frontend expects
+    // Format the database rows to match exactly what React expects
     const formattedStudents = students.map((student) => ({
       userId: student.id.toString(),
       name: `${student.first_name} ${student.last_name}`,
       email: student.email,
-      major: "Computer Science", // Placeholder until you add this column to the DB
-      joinDate: "2026-01-01", // Placeholder until you add this column to the DB
+      major: "Computer Science", // Placeholder
+      joinDate: "2026-01-01", // Placeholder
     }));
 
     res.status(200).json(formattedStudents);

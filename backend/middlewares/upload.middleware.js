@@ -9,12 +9,12 @@ const storage = multer.diskStorage({
   },
 });
 
-// Security: Limit file size to 2MB (to match frontend) and restrict types
+// Security measure: Limit file size to 2MB (to match frontend) and restrict types
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // Exactly 2MB
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // It is safer to check both the file extension AND the mimetype
+    // Check both the file extension AND the mimetype
     const filetypes = /pdf|jpeg|jpg|png/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase(),

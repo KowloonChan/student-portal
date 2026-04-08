@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
       bearerToken,
       process.env.JWT_SECRET || "your_secret_key",
     );
-    req.user = verified; // Store user info (id, role) in the request object
+    req.user = verified;
     next();
   } catch (err) {
     res.status(401).json({ message: "Invalid or Expired Token" });
